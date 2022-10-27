@@ -56,31 +56,23 @@ const posts = [
     }
 ];
 //? inverte il formato della data
-const container = document.querySelector('#container');
 const changeDateFormat = (data) => data.split('-').reverse().join('-');
-
-const postsList = [];
+const container = document.querySelector('#container');
+const postsList = [], likeList = [];
 
 initPosts();
 
 //? stampa nel DOM i post 
-function initPosts(){
+function initPosts() {
     posts.forEach(post => {
         const myPost = createPost(post);
         container.appendChild(myPost);
         postsList.push(myPost);
-
-    /*  container.innerHTML += createPost(post);
-        postsList.push(container.lastElementChild); */
-    /*    container.lastElementChild.querySelector('.likes__cta').addEventListener('click', ()=>{
-            console.log("data");
-        }); */
     });
-    console.log(postsList);
 }
 
 //? creazione del post in HTML partendo dai dati dell'oggetto
-function createPost(object){
+function createPost(object) {
     let post = document.createElement('div');
     post.classList.add('post');
     post.id = `post${object.id}`
@@ -109,7 +101,7 @@ function createPost(object){
                         </a>
                     </div>
                     <div class="likes__counter">
-                        Piace a <b id="like-counter-1" class="js-likes-counter">${object.likes}</b> persone
+                        Piace a <b id="like-counter-${object.id}" class="js-likes-counter">${object.likes}</b> persone
                     </div>
                 </div> 
             </div>            
@@ -122,33 +114,49 @@ function createPost(object){
 }
 
 //? Controlla l'esistenza della foto profilo
-function setProfilePic(object){
-    if(object.author.image !== null)
+function setProfilePic(object) {
+    if (object.author.image !== null)
         return `<img class="profile-pic" src="${object.author.image}" alt="${object.author.name}">`;
-    
-    else 
+
+    else
         return `<div class="profile-pic monogram">
         <span class="mono">${getMonogram(object.author.name)}</span>
         </div>`;
 }
 
 //? Restituisce le iniziali dell'autore
-function getMonogram(name){
+function getMonogram(name) {
     let mono = name[0];
-    for(let i=0; i<name.length; i++){
-        if(name[i] === " ")
-            mono += name[i+1];
+    for (let i = 0; i < name.length; i++) {
+        if (name[i] === " ")
+            mono += name[i + 1];
     }
     return mono;
 }
 
-function likeCliked(post){
 
+function likeCliked(post) {
     const btn = post.querySelector('.like-button');
-    
-    if(!btn.classList.contains('like-button--liked'))
-        btn.classList.add('like-button--liked');
-    else
-        btn.classList.remove('like-button--liked');
+    let postID = parseInt(btn.getAttribute('data-postid'));
+    let newLike = null;
 
+    if (!btn.classList.contains('like-button--liked')) {
+        btn.classList.add('like-button--liked');
+        likeList.push(postID);
+        newLike = ++posts[postID - 1].likes;
+    }
+    else {
+        btn.classList.remove('like-button--liked');
+        removeItem(likeList, postID);
+        newLike = --posts[postID - 1].likes;
+    }
+    
+    post.querySelector('.js-likes-counter').innerHTML = newLike;
 }
+
+//? Rimuove l'elemento dall'array
+function removeItem(arr, value) {
+    const index = arr.indexOf(value);
+    if (index > -1) arr.splice(index, 1);
+}
+
