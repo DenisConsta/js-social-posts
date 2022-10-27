@@ -55,24 +55,36 @@ const posts = [
         "created": "2021-03-05"
     }
 ];
-
 //? inverte il formato della data
+const container = document.querySelector('#container');
 const changeDateFormat = (data) => data.split('-').reverse().join('-');
+
+const postsList = [];
 
 initPosts();
 
 //? stampa nel DOM i post 
 function initPosts(){
     posts.forEach(post => {
-        document.querySelector('#container').innerHTML += createPost(post);
+        const myPost = createPost(post);
+        container.appendChild(myPost);
+        postsList.push(myPost);
+
+    /*  container.innerHTML += createPost(post);
+        postsList.push(container.lastElementChild); */
+    /*    container.lastElementChild.querySelector('.likes__cta').addEventListener('click', ()=>{
+            console.log("data");
+        }); */
     });
+    console.log(postsList);
 }
 
 //? creazione del post in HTML partendo dai dati dell'oggetto
 function createPost(object){
-    let post;
-    post = `
-        <div class="post">
+    let post = document.createElement('div');
+    post.classList.add('post');
+    post.id = `post${object.id}`
+    post.innerHTML = `
             <div class="post__header">
                 <div class="post-meta">                    
                     <div class="post-meta__icon">
@@ -90,10 +102,10 @@ function createPost(object){
             </div>
             <div class="post__footer">
                 <div class="likes js-likes">
-                    <div class="likes__cta">
-                        <a class="like-button  js-like-button" href="#" data-postid="1">
+                    <div class="likes__cta ">
+                        <a class="like-button js-like-button" data-postid="${object.id}">
                             <i class="like-button__icon fas fa-thumbs-up" aria-hidden="true"></i>
-                            <span class="like-button__label">Mi Piace</span>
+                            <span class="like-button__label ">Mi Piace</span>
                         </a>
                     </div>
                     <div class="likes__counter">
@@ -101,10 +113,12 @@ function createPost(object){
                     </div>
                 </div> 
             </div>            
-        </div>
     `;
-    return post;
 
+    //? Listener button
+    post.querySelector('.like-button').addEventListener('click', () => likeCliked(post));
+
+    return post;
 }
 
 //? Controlla l'esistenza della foto profilo
@@ -126,4 +140,15 @@ function getMonogram(name){
             mono += name[i+1];
     }
     return mono;
+}
+
+function likeCliked(post){
+
+    const btn = post.querySelector('.like-button');
+    
+    if(!btn.classList.contains('like-button--liked'))
+        btn.classList.add('like-button--liked');
+    else
+        btn.classList.remove('like-button--liked');
+
 }
