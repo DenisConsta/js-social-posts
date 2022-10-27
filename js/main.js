@@ -56,14 +56,19 @@ const posts = [
     }
 ];
 
+//? inverte il formato della data
+const changeDateFormat = (data) => data.split('-').reverse().join('-');
+
 initPosts();
 
+//? stampa nel DOM i post 
 function initPosts(){
     posts.forEach(post => {
         document.querySelector('#container').innerHTML += createPost(post);
     });
 }
 
+//? creazione del post in HTML partendo dai dati dell'oggetto
 function createPost(object){
     let post;
     post = `
@@ -75,7 +80,7 @@ function createPost(object){
                     </div>
                     <div class="post-meta__data">
                         <div class="post-meta__author">${object.author.name}</div>
-                        <div class="post-meta__time">${object.created}</div>
+                        <div class="post-meta__time">${changeDateFormat(object.created)}</div>
                     </div>                    
                 </div>
             </div>
@@ -102,7 +107,7 @@ function createPost(object){
 
 }
 
-
+//? Controlla l'esistenza della foto profilo
 function setProfilePic(object){
     if(object.author.image !== null)
         return `<img class="profile-pic" src="${object.author.image}" alt="${object.author.name}">`;
@@ -113,7 +118,7 @@ function setProfilePic(object){
         </div>`;
 }
 
-
+//? Restituisce le iniziali dell'autore
 function getMonogram(name){
     let mono = name[0];
     for(let i=0; i<name.length; i++){
