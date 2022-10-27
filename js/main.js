@@ -8,7 +8,7 @@ const posts = [
             "image": "https://unsplash.it/300/300?image=15"
         },
         "likes": 80,
-        "created": "2021-06-25"
+        "created": "2022-06-25"
     },
     {
         "id": 2,
@@ -30,7 +30,7 @@ const posts = [
             "image": "https://unsplash.it/300/300?image=20"
         },
         "likes": 78,
-        "created": "2021-05-15"
+        "created": "2022-05-15"
     },
     {
         "id": 4,
@@ -52,7 +52,7 @@ const posts = [
             "image": "https://unsplash.it/300/300?image=29"
         },
         "likes": 95,
-        "created": "2021-03-05"
+        "created": "2020-03-05"
     }
 ];
 //? inverte il formato della data
@@ -84,7 +84,7 @@ function createPost(object) {
                     </div>
                     <div class="post-meta__data">
                         <div class="post-meta__author">${object.author.name}</div>
-                        <div class="post-meta__time">${changeDateFormat(object.created)}</div>
+                        <div class="post-meta__time">${changeDateFormat(object.created) + " - " + getTimeAgo(object.created)}</div>
                     </div>                    
                 </div>
             </div>
@@ -134,7 +134,7 @@ function getMonogram(name) {
     return mono;
 }
 
-
+//? funzione lanciata al click del "mi piace"
 function likeCliked(post) {
     const btn = post.querySelector('.like-button');
     let postID = parseInt(btn.getAttribute('data-postid'));
@@ -152,6 +152,7 @@ function likeCliked(post) {
     }
     
     post.querySelector('.js-likes-counter').innerHTML = newLike;
+    console.log(likeList);
 }
 
 //? Rimuove l'elemento dall'array
@@ -160,3 +161,25 @@ function removeItem(arr, value) {
     if (index > -1) arr.splice(index, 1);
 }
 
+//? restituisce la differenza in mesi tra la data e oggi
+function monthDiff(date) {
+    date = new Date(date);
+    const today = new Date();
+    let months;
+    months = (today.getFullYear() - date.getFullYear()) * 12;
+    months -= date.getMonth();
+    months += today.getMonth();
+    return months <= 0 ? 0 : months;
+}
+
+//? restituisce la differenza di tempo in mesi/anni
+function getTimeAgo(date){
+    const mesi = monthDiff(date);
+    if (mesi < 12){
+        return mesi + " months ago";
+    }else if(parseInt((mesi / 12)) === 1){
+        return parseInt((mesi / 12)) + " year ago";
+    }else{
+        return parseInt((mesi / 12)) + " years ago";
+    }
+}
